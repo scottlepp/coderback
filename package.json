@@ -1,0 +1,13 @@
+{
+  "name": "agent-workspace-node-fullstack-fixture",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "npm install --ignore-scripts",
+    "start:backend": "node src/backend.mjs",
+    "start:frontend": "node src/frontend.mjs",
+    "verify:browser": "node scripts/verify-browser.mjs",
+    "cleanup": "node scripts/cleanup.mjs"
+  }
+}

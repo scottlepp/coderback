@@ -1,0 +1,24 @@
+version: 1
+setup:
+  command: npm run setup
+services:
+  backend:
+    command: npm run start:backend
+    port: 3001
+    health_url: http://127.0.0.1:3001/health
+    readiness_timeout_seconds: 30
+  frontend:
+    command: npm run start:frontend
+    port: 3000
+    health_url: http://127.0.0.1:3000/health
+    depends_on:
+      - backend
+    readiness_timeout_seconds: 30
+verification:
+  command: npm run verify:browser
+  artifacts:
+    - artifacts/browser-report.json
+    - artifacts/frontend.png
+    - artifacts/frontend.snapshot.json
+cleanup:
+  command: npm run cleanup

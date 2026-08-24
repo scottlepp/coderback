@@ -1,0 +1,8 @@
+{
+  "name": "Agent workspace Node full-stack fixture",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": "npm run setup"
+}
