@@ -6,6 +6,15 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 const artifactDir = resolve('artifacts');
 const frontendUrl = process.env.FRONTEND_URL ?? 'http://127.0.0.1:3000';
+const browserArgs = process.env.AGENT_BROWSER_ARGS ?? '--no-sandbox';
+
+/**
+ * Runs agent-browser with candidate-compatible Chromium launch arguments.
+ *
+ * @param {string[]} args Command-specific agent-browser arguments.
+ * @returns {Promise<{ stdout: string; stderr: string }>} Command output.
+ */
+const runAgentBrowser = (args) => execFileAsync('agent-browser', ['--args', browserArgs, ...args]);
 
 await mkdir(artifactDir, { recursive: true });
 
@@ -16,10 +25,10 @@ let report = {
 };
 
 try {
-  await execFileAsync('agent-browser', ['open', frontendUrl]);
-  const { stdout: snapshot } = await execFileAsync('agent-browser', ['snapshot', '--json']);
+  await runAgentBrowser(['open', frontendUrl]);
+  const { stdout: snapshot } = await runAgentBrowser(['snapshot', '--json']);
   await writeFile(resolve(artifactDir, 'frontend.snapshot.json'), snapshot);
-  await execFileAsync('agent-browser', ['screenshot', resolve(artifactDir, 'frontend.png'), '--full']);
+  await runAgentBrowser(['screenshot', resolve(artifactDir, 'frontend.png'), '--full']);
 
   report = {
     ...report,
@@ -31,7 +40,7 @@ try {
     error: error instanceof Error ? error.message : String(error),
   };
 } finally {
-  await execFileAsync('agent-browser', ['close']).catch(() => undefined);
+  await runAgentBrowser(['close']).catch(() => undefined);
   await writeFile(resolve(artifactDir, 'browser-report.json'), JSON.stringify(report, null, 2) + '\n');
 }
 
